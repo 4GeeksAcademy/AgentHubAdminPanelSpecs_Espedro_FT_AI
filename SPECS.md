@@ -4,6 +4,36 @@
 
 Specify an admin panel for managing AgentHub platform activity, users, agents, skills, rental contracts, and execution errors. The panel contains the six sections below.
 
+## Product and Admin User
+
+AgentHub lets clients rent AI agents and combine reusable skills to support research, customer service, data analysis, content creation, and workflow automation. The platform administrator manages clients, agent configurations, the skill catalog, rental billing, and execution health across all clients.
+
+## Implementation and Constraints
+
+- The complete panel lives in `index.html`; open it directly in a browser or serve it with a static web server.
+- HTML, Tailwind CSS via CDN, and vanilla JavaScript only. No custom CSS, framework, or backend.
+- An internet connection is required to load Tailwind from its CDN.
+- Sample data powers all six sections. Data edits last for the current page session; reloading restores sample records.
+- Theme preference is saved in browser local storage. Hash-based navigation supports direct links and browser history.
+- Dashboard billing metrics use the fixed November 2026 demo period. The weekly chart is an illustrative placeholder, not live analytics.
+- Deleting users or skills that are still referenced by agents is blocked. Historical contract and error records are retained when agents are deleted.
+- The dashboard CSV export contains all sample rental contracts, including historical ones.
+
+## Reusable Component Inventory
+
+| Component | Shared behavior |
+| --- | --- |
+| Sidebar | Persistent navigation to six sections, active indicator, mobile drawer. |
+| Metric card | Label, icon, value, and contextual note. |
+| Action dropdown | Per-record actions, outside-click and Escape dismissal. |
+| Modal | Native dialog with focus management, close button, Escape, and backdrop dismissal. |
+| Badge | Shared plan, status, and severity styling. |
+| Collapsible skill list | Hidden initially, accessible expanded state, animated reveal, reduced-motion support. |
+| Dark mode toggle | Applies Tailwind `dark:` utilities throughout the interface and saves the preference. |
+| Listing table | Shared headers, row layout, horizontal overflow, and empty state. |
+| Search and status filter | Search current-section records and filter supported listings by status. |
+| Toast | Accessible feedback for completed actions and preference-storage errors. |
+
 ## Shared Interface
 
 - Provide persistent sidebar navigation to Dashboard, User Management, Agent Management, Skills, Agent Contracts, and Error Log.

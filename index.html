@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="AgentHub is the control center for managing AI agents, clients, skills, rental contracts, and execution health.">
+  <title>Dashboard | AgentHub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased dark:bg-slate-950 dark:text-slate-200">
+  <a href="#main" class="sr-only z-50 rounded-lg bg-violet-600 p-3 text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Skip to content</a>
+  <div id="mobile-backdrop" class="fixed inset-0 z-30 hidden bg-slate-950/60 lg:hidden"></div>
+  <aside id="sidebar" aria-label="Main navigation" class="fixed inset-y-0 left-0 z-40 flex w-64 -translate-x-full flex-col border-r border-white/5 bg-[#111322] text-slate-400 transition-transform duration-200 lg:translate-x-0">
+    <a href="#dashboard" class="flex h-24 items-center gap-3 px-7 text-white">
+      <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500 text-white shadow-lg shadow-violet-500/20" data-icon="logo"></span>
+      <span class="text-xl font-bold tracking-tight">AgentHub<span class="text-violet-400">.</span></span>
+    </a>
+    <div class="mx-5 mb-7 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
+      <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-400/15 text-sm font-bold text-violet-300">A</span>
+      <div><p class="text-sm font-medium text-slate-100">Admin workspace</p><p class="mt-0.5 text-xs text-slate-500">Platform management</p></div>
+      <span class="ml-auto h-2 w-2 rounded-full bg-emerald-400" title="Demo workspace"></span>
+    </div>
+    <p class="px-7 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">Workspace</p>
+    <nav id="navigation" class="mt-3 space-y-1 px-4"></nav>
+    <div class="mt-auto p-5">
+      <div class="rounded-xl border border-violet-400/15 bg-violet-500/10 p-4">
+        <span class="mb-3 block text-violet-300" data-icon="sparkles"></span>
+        <p class="text-sm font-medium text-slate-100">Your agents, in sync.</p>
+        <p class="mt-2 text-xs leading-5 text-slate-400">One place to manage your AI workforce and keep things running smoothly.</p>
+        <button id="about-button" class="mt-3 text-xs font-medium text-violet-300 hover:text-violet-200">Explore your workspace &rarr;</button>
+      </div>
+      <div class="mt-5 flex items-center gap-3 border-t border-white/10 pt-5">
+        <span class="flex h-9 w-9 items-center justify-center rounded-full bg-[#dddbf5] text-xs font-bold text-violet-900">AD</span>
+        <div><p class="text-sm font-medium text-slate-100">Admin</p><p class="text-xs text-slate-500">Platform administrator</p></div>
+        <span class="ml-auto text-slate-500" data-icon="shield"></span>
+      </div>
+    </div>
+  </aside>
+
+  <div class="min-h-screen lg:pl-64">
+    <header class="sticky top-0 z-20 flex h-20 items-center gap-4 border-b border-slate-200/80 bg-white/95 px-5 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95 sm:px-8">
+      <button id="menu-button" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false" class="rounded-lg p-2 hover:bg-slate-100 dark:hover:bg-slate-800 lg:hidden" data-icon="menu"></button>
+      <div class="hidden items-center gap-2 text-sm sm:flex"><span class="text-slate-400">Workspace</span><span class="text-slate-300">/</span><span id="breadcrumb" class="font-medium">Dashboard</span></div>
+      <div class="relative ml-auto w-full max-w-xs">
+        <span class="pointer-events-none absolute left-3 top-2.5 text-slate-400" data-icon="search"></span>
+        <input id="search" type="search" aria-label="Search current section" placeholder="Search agents…" class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-10 pr-3 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/10 dark:border-slate-700 dark:bg-slate-800">
+      </div>
+      <button id="theme-toggle" aria-label="Switch to dark mode" class="shrink-0 rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"></button>
+      <span class="hidden h-6 w-px bg-slate-200 dark:bg-slate-700 sm:block"></span>
+      <span class="hidden items-center gap-2 whitespace-nowrap text-xs text-slate-500 sm:flex"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>Demo workspace</span>
+    </header>
+    <main id="main" tabindex="-1" class="mx-auto max-w-[1600px] px-5 py-8 outline-none sm:px-8 lg:py-9">
+      <div class="mb-8 flex flex-wrap items-start justify-between gap-4">
+        <div><div class="mb-2 flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-violet-500"></span><p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-violet-500">Your control center</p></div><h1 id="page-title" class="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">Dashboard</h1><p id="page-description" class="mt-2 text-sm text-slate-500 dark:text-slate-400"></p></div>
+        <div id="page-actions" class="flex items-center gap-2"></div>
+      </div>
+      <div id="content"></div>
+      <footer class="mt-8 flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 pt-5 text-xs text-slate-400 dark:border-slate-800"><span>AgentHub &copy; 2026 <span class="mx-2">&middot;</span> Built for a smarter workforce.</span><span>Interactive demo &middot; Changes reset on reload</span></footer>
+    </main>
+  </div>
+
+  <dialog id="modal" aria-labelledby="modal-title" class="m-auto max-h-[85vh] w-[calc(100%-2rem)] max-w-xl overflow-y-auto rounded-2xl border border-slate-200 bg-white p-0 text-slate-800 shadow-2xl backdrop:bg-slate-950/60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+    <div class="flex items-center justify-between border-b border-slate-100 px-6 py-5 dark:border-slate-800"><h2 id="modal-title" class="text-lg font-semibold"></h2><button id="modal-close" aria-label="Close modal" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800" data-icon="close"></button></div>
+    <div id="modal-body" class="p-6"></div>
+  </dialog>
+  <div id="toast" role="status" aria-live="polite" class="fixed bottom-6 left-4 right-4 z-50 hidden rounded-xl border border-slate-200 bg-white px-5 py-4 text-sm text-slate-800 shadow-xl dark:border-slate-700 dark:bg-slate-800 dark:text-white sm:left-auto sm:max-w-sm"></div>
+
+  <script>
+    const paths = {
+      logo: '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9m-4-16.5 8 4.5v5"/>',
+      dashboard: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+      users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2m20 0v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/><circle cx="9" cy="7" r="4"/>',
+      agents: '<rect x="4" y="7" width="16" height="14" rx="4"/><path d="M12 3v4M2 12h2m16 0h2M9 17h6"/><path d="M9 11v2m6-2v2"/>',
+      skills: '<path d="m12 3-9 5 9 5 9-5-9-5Zm-9 9 9 5 9-5m-18 5 9 5 9-5"/>',
+      contracts: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Z"/><path d="M14 2v6h6M8 13h8m-8 4h5"/>',
+      errors: '<path d="m10.3 3.9-8 14a2 2 0 0 0 1.7 3h16a2 2 0 0 0 1.7-3l-8-14a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4m0 4h.01"/>',
+      search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/>',
+      moon: '<path d="M21 12.8A9 9 0 0 1 11.2 3 9 9 0 1 0 21 12.8Z"/>',
+      sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/>',
+      menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
+      close: '<path d="m6 6 12 12M6 18 18 6"/>',
+      chevron: '<path d="m9 5 7 7-7 7"/>',
+      down: '<path d="m6 9 6 6 6-6"/>',
+      more: '<circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>',
+      arrow: '<path d="M7 17 17 7M7 7h10v10"/>',
+      trend: '<path d="m3 17 6-6 4 4 8-10m-6 0h6v6"/>',
+      dollar: '<path d="M12 2v20m5-16H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+      tag: '<path d="M20 13 13 20a2 2 0 0 1-3 0L2 12V2h10l8 8a2 2 0 0 1 0 3Z"/><circle cx="7" cy="7" r="1"/>',
+      calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/>',
+      download: '<path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/>',
+      sparkles: '<path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3Zm7-1v4m-2-2h4"/>',
+      shield: '<path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z"/><path d="m8 12 3 3 5-6"/>',
+      check: '<path d="m5 12 4 4L19 6"/>',
+      clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'
+    };
+    const icon = (name, size = 'h-5 w-5') => `<svg class="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.agents}</svg>`;
+    document.querySelectorAll('[data-icon]').forEach(el => { el.innerHTML = icon(el.dataset.icon); });
+    const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+    const money = value => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
+    const sections = [
+      { id: 'dashboard', title: 'Dashboard', icon: 'dashboard', description: "A little oversight. A lot of possibilities. Here's your platform at a glance." },
+      { id: 'users', title: 'User Management', icon: 'users', description: 'The people behind the possibilities. Manage your clients and their access.' },
+      { id: 'agents', title: 'Agent Management', icon: 'agents', description: 'Meet your AI workforce. Monitor, configure, and manage every agent.' },
+      { id: 'skills', title: 'Skills', icon: 'skills', description: 'Small capabilities. Powerful combinations. Explore your skill library.' },
+      { id: 'contracts', title: 'Agent Contracts', icon: 'contracts', description: 'Every partnership, in one place. Keep track of agent rentals and billing.' },
+      { id: 'errors', title: 'Error Log', icon: 'errors', description: 'Keep your workforce moving. Investigate and resolve execution issues.' }
+    ];
+    let users = [
+      { id: 'USR-001', name: 'Olivia Rhye', email: 'olivia@acme.example', company: 'Acme Studio', plan: 'Enterprise', status: 'Active', joined: 'August 12, 2026' },
+      { id: 'USR-002', name: 'Phoenix Baker', email: 'phoenix@layers.example', company: 'Layers', plan: 'Pro', status: 'Active', joined: 'September 3, 2026' },
+      { id: 'USR-003', name: 'Lana Steiner', email: 'lana@sisyphus.example', company: 'Sisyphus', plan: 'Pro', status: 'Active', joined: 'September 18, 2026' },
+      { id: 'USR-004', name: 'Demi Wilkinson', email: 'demi@catalog.example', company: 'Catalog', plan: 'Starter', status: 'Inactive', joined: 'October 2, 2026' },
+      { id: 'USR-005', name: 'Drew Cano', email: 'drew@circooles.example', company: 'Circooles', plan: 'Enterprise', status: 'Active', joined: 'October 15, 2026' }
+    ];
+    let skills = [
+      { id: 'SK-01', name: 'Natural language', description: 'Understand intent and craft clear, human-friendly responses.', icon: 'sparkles', price: 180 },
+      { id: 'SK-02', name: 'Data analysis', description: 'Turn raw datasets into useful insights and actionable reports.', icon: 'dashboard', price: 240 },
+      { id: 'SK-03', name: 'Web research', description: 'Find, summarize, and organize information from the web.', icon: 'search', price: 120 },
+      { id: 'SK-04', name: 'Workflow automation', description: 'Connect everyday tasks and automate repetitive processes.', icon: 'skills', price: 300 },
+      { id: 'SK-05', name: 'Customer support', description: 'Resolve customer questions with context-aware assistance.', icon: 'users', price: 200 },
+      { id: 'SK-06', name: 'Content creation', description: 'Create on-brand copy, articles, and marketing materials.', icon: 'contracts', price: 160 }
+    ];
+    let agents = [
+      { id: 'AG-001', name: 'Atlas', role: 'Research assistant', owner: 'Olivia Rhye', status: 'Active', skills: ['SK-01', 'SK-03', 'SK-02'], runs: 2840, prompt: 'You are Atlas, a meticulous research assistant. Find reliable sources, synthesize key findings, and cite evidence. Distinguish facts from assumptions and ask for clarification when needed.' },
+      { id: 'AG-002', name: 'Nova', role: 'Customer success', owner: 'Phoenix Baker', status: 'Active', skills: ['SK-01', 'SK-05'], runs: 1924, prompt: 'You are Nova, a helpful customer success agent. Use the approved knowledge base to answer questions. Be concise, empathetic, and transparent. Escalate issues you cannot resolve.' },
+      { id: 'AG-003', name: 'Orbit', role: 'Workflow specialist', owner: 'Lana Steiner', status: 'Failing', skills: ['SK-04', 'SK-02'], runs: 1456, prompt: 'You are Orbit, a workflow automation specialist. Validate inputs before executing tasks. Never perform destructive actions without confirmation. Report errors with enough context for investigation.' },
+      { id: 'AG-004', name: 'Echo', role: 'Content assistant', owner: 'Drew Cano', status: 'Active', skills: ['SK-01', 'SK-06'], runs: 986, prompt: 'You are Echo, a creative content assistant. Write accessible, original content that follows the client brand guidelines. Ask for the intended audience and desired tone when unclear.' },
+      { id: 'AG-005', name: 'Pixel', role: 'Data analyst', owner: 'Demi Wilkinson', status: 'Inactive', skills: ['SK-02'], runs: 642, prompt: 'You are Pixel, a careful data analyst. Validate source data, explain your methodology, and report limitations. Never invent data points or imply correlation proves causation.' }
+    ];
+    const contracts = [
+      { id: 'CT-2026-001', client: 'Acme Studio', agent: 'Atlas', start: '2026-11-01', end: '2026-11-30', paid: '2026-11-01', status: 'Active', base: 2400, discount: 150, items: [{ name: 'Natural language', price: 180 }, { name: 'Web research', price: 120 }, { name: 'Data analysis', price: 240 }] },
+      { id: 'CT-2026-002', client: 'Layers', agent: 'Nova', start: '2026-11-01', end: '2026-11-30', paid: '2026-11-01', status: 'Active', base: 1800, discount: 100, items: [{ name: 'Natural language', price: 180 }, { name: 'Customer support', price: 200 }] },
+      { id: 'CT-2026-003', client: 'Sisyphus', agent: 'Orbit', start: '2026-10-15', end: '2026-11-14', paid: '2026-10-15', status: 'Active', base: 2200, discount: 200, items: [{ name: 'Workflow automation', price: 300 }, { name: 'Data analysis', price: 240 }] },
+      { id: 'CT-2026-004', client: 'Circooles', agent: 'Echo', start: '2026-11-01', end: '2026-11-30', paid: '2026-11-01', status: 'Active', base: 1600, discount: 80, items: [{ name: 'Natural language', price: 180 }, { name: 'Content creation', price: 160 }] },
+      { id: 'CT-2026-005', client: 'Catalog', agent: 'Pixel', start: '2026-10-01', end: '2026-10-31', paid: '2026-10-01', status: 'Expired', base: 1200, discount: 0, items: [{ name: 'Data analysis', price: 240 }] }
+    ];
+    let errors = [
+      { id: 'ERR-001', time: '2026-11-03 14:32:08 UTC', agent: 'Orbit', type: 'Timeout', severity: 'Critical', description: 'Workflow execution exceeded the 30-second limit.', resolved: false, trace: 'TimeoutError: Workflow execution exceeded 30000ms\n  at WorkflowRunner.execute (workflow-runner.js:142:18)\n  at Agent.run (agent.js:87:12)\nTask: sync_customer_records\nExecution: exec_8f23a\nUpstream: CRM connector did not respond within the deadline.' },
+      { id: 'ERR-002', time: '2026-11-03 12:18:42 UTC', agent: 'Atlas', type: 'Rate limit', severity: 'Warning', description: 'Research provider request quota temporarily exceeded.', resolved: false, trace: 'RateLimitError: Provider returned HTTP 429\n  at ResearchProvider.fetch (research.js:64:9)\n  at Atlas.research (agent.js:115:14)\nExecution: exec_7b18c\nRetry-After: 60 seconds\nNo automatic retry has been executed.' },
+      { id: 'ERR-003', time: '2026-11-03 09:45:16 UTC', agent: 'Nova', type: 'Validation', severity: 'Info', description: 'A support request was missing its customer identifier.', resolved: true, trace: 'ValidationError: customer_id is required\n  at validateInput (validator.js:23:11)\n  at Nova.respond (support.js:41:6)\nExecution: exec_6d92f\nResolution: Client submitted a corrected request.' }
+    ];
+    const surface = 'min-w-0 rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900';
+    const secondaryButton = 'inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50 focus-visible:outline-violet-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800';
+    const th = 'whitespace-nowrap px-5 py-3.5 text-left text-[11px] font-medium uppercase tracking-wide text-slate-400';
+    const td = 'px-5 py-4 text-sm';
+    let activeSection = 'dashboard';
+    let query = '';
+    let statusFilter = 'All';
+    let toastTimer;
+    let modalOpener;
+    let pendingDelete = null;
+    function notify(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.add('hidden'), 5000);
+    }
+    function badge(text) {
+      const color = ({ Active: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-400', Resolved: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-400', Failing: 'bg-rose-50 text-rose-600 dark:bg-rose-400/10 dark:text-rose-400', Critical: 'bg-rose-50 text-rose-600 dark:bg-rose-400/10 dark:text-rose-400', Warning: 'bg-amber-50 text-amber-700 dark:bg-amber-400/10 dark:text-amber-400', Info: 'bg-blue-50 text-blue-600 dark:bg-blue-400/10 dark:text-blue-400', Enterprise: 'bg-violet-50 text-violet-600 dark:bg-violet-400/10 dark:text-violet-300', Pro: 'bg-blue-50 text-blue-600 dark:bg-blue-400/10 dark:text-blue-400' })[text] || 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400';
+      return `<span class="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-2 py-1 text-[11px] font-medium ${color}"><span class="h-1 w-1 rounded-full bg-current"></span>${escapeHTML(text)}</span>`;
+    }
+    function avatar(name, isAgent = false) {
+      return `<span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-${isAgent ? 'lg' : 'full'} bg-violet-50 text-xs font-semibold text-violet-500 dark:bg-violet-400/10 dark:text-violet-300">${isAgent ? icon('agents', 'h-4 w-4') : escapeHTML(name.split(' ').map(part => part[0]).slice(0, 2).join(''))}</span>`;
+    }
+    function dropdown(type, id, label, actions) {
+      return `<div class="relative inline-block text-left"><button data-menu="${id}" aria-label="Actions for ${escapeHTML(label)}" aria-expanded="false" aria-controls="menu-${id}" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-white">${icon('more', 'h-4 w-4')}</button><div id="menu-${id}" class="absolute right-0 top-full z-10 hidden w-40 rounded-lg border border-slate-200 bg-white p-1 shadow-xl dark:border-slate-700 dark:bg-slate-800">${actions.map(([action, title]) => `<button data-action="${action}" data-type="${type}" data-id="${id}" class="block w-full rounded-md px-3 py-2 text-left text-xs ${action === 'delete' ? 'text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10' : 'text-slate-600 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-700'}">${title}</button>`).join('')}</div></div>`;
+    }
+    const matches = item => JSON.stringify(item).toLowerCase().includes(query.toLowerCase());
+    const contractTotal = contract => contract.base + contract.items.reduce((total, item) => total + item.price, 0) - contract.discount;
+    const emptyRow = columns => `<tr><td colspan="${columns}" class="px-5 py-14 text-center text-sm text-slate-400">No results found. Try another search or filter.</td></tr>`;
+    function table(headers, rows) {
+      return `<div class="relative overflow-x-auto pb-28"><table class="w-full"><thead class="border-y border-slate-100 bg-slate-50/70 dark:border-slate-800 dark:bg-slate-800/30"><tr>${headers.map(header => `<th scope="col" class="${th}">${header || '<span class="sr-only">Actions</span>'}</th>`).join('')}</tr></thead><tbody class="divide-y divide-slate-100 dark:divide-slate-800">${rows || emptyRow(headers.length)}</tbody></table></div>`;
+    }
+    function panelHeader(title, subtitle, link = '') {
+      return `<div class="flex flex-wrap items-center justify-between gap-3 px-5 py-5"><div><h2 class="text-sm font-semibold text-slate-900 dark:text-slate-100">${title}</h2>${subtitle ? `<p class="mt-1 text-xs text-slate-400">${subtitle}</p>` : ''}</div>${link}</div>`;
+    }
+    function renderNavigation() {
+      document.getElementById('navigation').innerHTML = sections.map(section => `<a href="#${section.id}" ${section.id === activeSection ? 'aria-current="page"' : ''} class="group flex items-center gap-3 rounded-lg px-3 py-3 text-[13px] transition ${section.id === activeSection ? 'bg-violet-500/15 font-medium text-violet-300' : 'hover:bg-white/5 hover:text-slate-100'}">${icon(section.icon, 'h-[18px] w-[18px]')}<span>${section.title}</span>${section.id === 'errors' && errors.some(error => !error.resolved) ? `<span class="ml-auto rounded bg-rose-400/10 px-1.5 py-0.5 text-[10px] text-rose-400">${errors.filter(error => !error.resolved).length}</span>` : ''}${section.id === activeSection ? '<span class="ml-auto h-1.5 w-1.5 rounded-full bg-violet-400"></span>' : ''}</a>`).join('');
+    }
+    function agentRows(list, compact = false) {
+      return list.map(agent => `<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30"><td class="${td}"><div class="flex items-center gap-3">${avatar(agent.name, true)}<div><p class="font-medium text-slate-800 dark:text-slate-200">${escapeHTML(agent.name)}</p><p class="mt-0.5 text-xs text-slate-400">${escapeHTML(agent.role)}</p></div></div></td><td class="${td} text-slate-500 dark:text-slate-400">${escapeHTML(agent.owner)}</td><td class="${td}">${badge(agent.status)}</td>${compact ? `<td class="${td} text-right">${agent.runs.toLocaleString()}</td>` : `<td class="${td}"><button data-expand="${agent.id}" aria-expanded="false" aria-controls="skills-${agent.id}" class="flex items-center gap-2 whitespace-nowrap text-xs text-slate-500 hover:text-violet-500">${agent.skills.length} skills ${icon('down', 'h-3.5 w-3.5 transition-transform')}</button><div id="skills-${agent.id}" class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 motion-reduce:transition-none"><div class="overflow-hidden"><ul class="space-y-2 pt-3">${agent.skills.map(id => `<li class="whitespace-nowrap text-xs text-violet-500 dark:text-violet-300">${escapeHTML(skills.find(skill => skill.id === id)?.name || 'Unavailable skill')}</li>`).join('')}</ul></div></div></td>`}<td class="${td} text-right">${dropdown('agents', agent.id, agent.name, [['configure', 'Configure'], ['delete', 'Delete agent']])}</td></tr>`).join('');
+    }
+    function renderDashboard() {
+      const monthly = contracts.filter(contract => contract.paid.startsWith('2026-11'));
+      const metrics = [
+        { title: 'Monthly revenue', value: money(monthly.reduce((sum, contract) => sum + contractTotal(contract), 0)), icon: 'dollar', note: 'Payments received in November', color: 'text-violet-500 bg-violet-50 dark:bg-violet-400/10' },
+        { title: 'Discount & coupon losses', value: money(monthly.reduce((sum, contract) => sum + contract.discount, 0)), icon: 'tag', note: 'Discounts applied this month', color: 'text-amber-500 bg-amber-50 dark:bg-amber-400/10' },
+        { title: 'Active agents', value: String(agents.filter(agent => agent.status === 'Active').length).padStart(2, '0'), icon: 'agents', note: `Across ${users.length} registered clients`, color: 'text-blue-500 bg-blue-50 dark:bg-blue-400/10' },
+        { title: 'Agents needing attention', value: String(agents.filter(agent => agent.status === 'Failing').length).padStart(2, '0'), icon: 'errors', note: 'Currently flagged as failing', color: 'text-rose-500 bg-rose-50 dark:bg-rose-400/10' }
+      ];
+      const bars = [[36, 20], [56, 32], [43, 26], [72, 39], [60, 33], [87, 48], [68, 38]];
+      return `<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">${metrics.map(metric => `<article class="${surface} p-5"><div class="mb-5 flex items-center justify-between gap-2"><h2 class="text-xs font-medium text-slate-500 dark:text-slate-400">${metric.title}</h2><span class="rounded-lg p-2 ${metric.color}">${icon(metric.icon, 'h-4 w-4')}</span></div><p class="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">${metric.value}</p><p class="mt-3 text-[11px] text-slate-400">${metric.note}</p></article>`).join('')}</div>
+      <div class="mt-6 grid gap-6 xl:grid-cols-3">
+        <section class="${surface} xl:col-span-2">${panelHeader('Weekly activity', 'A snapshot of your workforce in motion', '<span class="rounded-md bg-violet-50 px-2 py-1 text-[10px] font-medium text-violet-500 dark:bg-violet-500/10">Preview data</span>')}
+          <div class="flex flex-wrap items-center justify-between gap-3 px-5"><div><span class="text-2xl font-semibold tracking-tight">7,848</span><span class="ml-2 text-xs text-slate-400">executions</span></div><div class="flex gap-4 text-[10px] text-slate-400"><span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-sm bg-violet-500"></span>Completed</span><span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-sm bg-violet-200 dark:bg-violet-900"></span>Scheduled</span></div></div>
+          <div class="relative mx-5 mb-2 mt-7 h-48" role="img" aria-label="Illustrative weekly activity chart placeholder. Completed and scheduled executions from Monday to Sunday; not live data."><div class="pointer-events-none absolute inset-0 flex flex-col justify-between pb-6 text-[9px] text-slate-400">${['2k', '1.5k', '1k', '500'].map(label => `<div class="flex items-center gap-3"><span class="w-5">${label}</span><div class="flex-1 border-t border-dashed border-slate-100 dark:border-slate-800"></div></div>`).join('')}</div><div class="absolute inset-0 flex items-end justify-around gap-3 pl-8">${bars.map(([a, b], index) => `<div class="flex h-full flex-1 flex-col items-center justify-end"><div class="flex h-40 w-full items-end justify-center gap-1"><div class="w-3 max-w-7 flex-1 rounded-t bg-violet-500 ${['h-[36%]', 'h-[56%]', 'h-[43%]', 'h-[72%]', 'h-[60%]', 'h-[87%]', 'h-[68%]'][index]}"></div><div class="w-3 max-w-7 flex-1 rounded-t bg-violet-200 dark:bg-violet-900 ${['h-[20%]', 'h-[32%]', 'h-[26%]', 'h-[39%]', 'h-[33%]', 'h-[48%]', 'h-[38%]'][index]}"></div></div><span class="mt-3 text-[10px] text-slate-400">${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][index]}</span></div>`).join('')}</div></div><p class="px-5 pb-4 pt-2 text-[10px] text-slate-400">Weekly chart placeholder &middot; illustrative demo activity</p>
+        </section>
+        <section class="${surface}">${panelHeader('Platform health', 'A pulse check on your agents')}
+          <div class="px-5 pb-5"><div class="mb-6 flex items-center gap-3 rounded-lg bg-emerald-50 p-3 dark:bg-emerald-500/10"><span class="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10">${icon('shield', 'h-4 w-4')}</span><div><p class="text-xs font-medium text-emerald-700 dark:text-emerald-400">Demo environment</p><p class="mt-0.5 text-[10px] text-emerald-600">No live services connected</p></div></div>
+          ${[['Active agents', agents.filter(a => a.status === 'Active').length, 'bg-emerald-500'], ['Inactive agents', agents.filter(a => a.status === 'Inactive').length, 'bg-slate-300'], ['Failing agents', agents.filter(a => a.status === 'Failing').length, 'bg-rose-400']].map(([label, count, color]) => `<div class="mb-4 flex items-center justify-between text-xs"><span class="flex items-center gap-2 text-slate-500 dark:text-slate-400"><span class="h-2 w-2 rounded-full ${color}"></span>${label}</span><span class="font-medium">${count}</span></div>`).join('')}
+          <a href="#errors" class="mt-2 flex items-center justify-between border-t border-slate-100 pt-4 text-xs font-medium text-violet-500 dark:border-slate-800 dark:text-violet-300">View execution errors ${icon('chevron', 'h-3.5 w-3.5')}</a></div>
+        </section>
+      </div>
+      <section class="${surface} mt-6">${panelHeader('Your agents', 'Good work starts with a great team.', '<a href="#agents" class="flex items-center gap-1 text-xs font-medium text-violet-500 dark:text-violet-300">View all agents ' + icon('chevron', 'h-3 w-3') + '</a>')}${table(['Agent', 'Owner', 'Status', 'Executions', ''], agentRows(agents.filter(matches).slice(0, 4), true))}</section>`;
+    }
+    function renderUsers() {
+      const list = users.filter(matches).filter(user => statusFilter === 'All' || user.status === statusFilter);
+      return `<section class="${surface}">${panelHeader('All users <span class="ml-2 rounded-md bg-violet-50 px-2 py-0.5 text-[10px] text-violet-500 dark:bg-violet-500/10">' + users.length + '</span>', 'A connected community of clients and creators.')}${table(['Name', 'Email', 'Plan', 'Status', ''], list.map(user => `<tr><td class="${td}"><div class="flex items-center gap-3">${avatar(user.name)}<div><p class="font-medium">${escapeHTML(user.name)}</p><p class="text-xs text-slate-400">${escapeHTML(user.company)}</p></div></div></td><td class="${td} text-slate-500 dark:text-slate-400">${escapeHTML(user.email)}</td><td class="${td}">${badge(user.plan)}</td><td class="${td}">${badge(user.status)}</td><td class="${td} text-right">${dropdown('users', user.id, user.name, [['detail', 'View detail'], ['delete', 'Delete user']])}</td></tr>`).join(''))}</section>`;
+    }
+    function renderAgents() {
+      const list = agents.filter(matches).filter(agent => statusFilter === 'All' || agent.status === statusFilter);
+      return `<section class="${surface}">${panelHeader(`All agents <span class="ml-2 text-xs font-normal text-slate-400">${agents.length} total</span>`, 'Expand a skill list to see what each agent can do.')}${table(['Agent', 'Owner', 'Status', 'Enabled skills', ''], agentRows(list))}</section>`;
+    }
+    function renderSkills() {
+      const list = skills.filter(matches);
+      return `<div class="mb-6 flex items-start gap-3 rounded-xl border border-violet-100 bg-violet-50/70 p-5 dark:border-violet-500/20 dark:bg-violet-500/5"><span class="rounded-lg bg-violet-100 p-2 text-violet-500 dark:bg-violet-500/10">${icon('skills')}</span><div><h2 class="text-sm font-medium text-violet-900 dark:text-violet-200">What is a skill?</h2><p class="mt-1 text-xs leading-6 text-violet-700/80 dark:text-violet-300/80">A skill is a reusable capability you enable on an agent, like researching the web or analyzing data. Combine skills to build the right AI teammate for every client.</p></div></div><div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">${list.map(skill => `<article class="${surface} p-5"><div class="mb-5 flex justify-between"><span class="rounded-xl bg-violet-50 p-3 text-violet-500 dark:bg-violet-500/10">${icon(skill.icon)}</span>${dropdown('skills', skill.id, skill.name, [['detail', 'View detail'], ['delete', 'Delete skill']])}</div><h2 class="text-sm font-semibold">${escapeHTML(skill.name)}</h2><p class="mt-2 min-h-12 text-xs leading-6 text-slate-500 dark:text-slate-400">${escapeHTML(skill.description)}</p><div class="mt-5 flex items-center gap-2 border-t border-slate-100 pt-4 text-xs text-slate-400 dark:border-slate-800">${icon('agents', 'h-4 w-4')}<span><strong class="font-medium text-slate-600 dark:text-slate-300">${agents.filter(agent => agent.skills.includes(skill.id)).length} agents</strong> with this skill enabled</span></div></article>`).join('') || `<p class="py-12 text-sm text-slate-400">No skills match your search.</p>`}</div>`;
+    }
+    function renderContracts() {
+      const list = contracts.filter(matches).filter(contract => statusFilter === 'All' || contract.status === statusFilter);
+      return `<section class="${surface}">${panelHeader('Rental contracts', 'Active partnerships and past engagements. Prices in USD.')}${table(['Client', 'Rented agent', 'Contracted skills', 'Contract dates', 'Total paid', ''], list.map(contract => `<tr><td class="${td}"><p class="font-medium">${escapeHTML(contract.client)}</p><div class="mt-1">${badge(contract.status)}</div></td><td class="${td}">${escapeHTML(contract.agent)}</td><td class="${td}"><ul class="space-y-1 text-xs text-slate-500 dark:text-slate-400">${contract.items.map(item => `<li>${escapeHTML(item.name)}</li>`).join('')}</ul></td><td class="${td} whitespace-nowrap text-xs leading-6 text-slate-500 dark:text-slate-400">${contract.start}<br>${contract.end}</td><td class="${td} whitespace-nowrap font-medium">${money(contractTotal(contract))}</td><td class="${td} text-right">${dropdown('contracts', contract.id, contract.id, [['detail', 'View detail']])}</td></tr>`).join(''))}</section>`;
+    }
+    function renderErrors() {
+      const list = errors.filter(matches).filter(error => statusFilter === 'All' || (statusFilter === 'Resolved' ? error.resolved : !error.resolved));
+      return `<section class="${surface}">${panelHeader('Execution errors', `${errors.filter(error => !error.resolved).length} open issues &middot; Investigate traces and mark reviewed issues as resolved.`)}${table(['Timestamp (UTC)', 'Agent', 'Type / severity', 'Description', 'Status', ''], list.map(error => `<tr><td class="${td} whitespace-nowrap text-xs text-slate-400">${error.time.slice(0, 10)}<br><span class="mt-1 inline-block">${error.time.slice(11, 19)}</span></td><td class="${td} font-medium">${escapeHTML(error.agent)}</td><td class="${td}"><p class="mb-1.5 text-xs">${escapeHTML(error.type)}</p>${badge(error.severity)}</td><td class="${td} min-w-56 text-xs leading-5 text-slate-500 dark:text-slate-400">${escapeHTML(error.description)}</td><td class="${td}">${badge(error.resolved ? 'Resolved' : 'Open')}</td><td class="${td} text-right">${dropdown('errors', error.id, error.id, error.resolved ? [['detail', 'View detail']] : [['detail', 'View detail'], ['resolve', 'Mark as resolved']])}</td></tr>`).join(''))}</section>`;
+    }
+    function renderContent() {
+      const renderers = { dashboard: renderDashboard, users: renderUsers, agents: renderAgents, skills: renderSkills, contracts: renderContracts, errors: renderErrors };
+      document.getElementById('content').innerHTML = renderers[activeSection]();
+      renderNavigation();
+    }
+    function navigate() {
+      const requested = location.hash.slice(1);
+      if (requested === 'main') return;
+      activeSection = sections.some(section => section.id === requested) ? requested : 'dashboard';
+      const section = sections.find(item => item.id === activeSection);
+      query = '';
+      statusFilter = 'All';
+      const search = document.getElementById('search');
+      search.value = '';
+      search.placeholder = `Search ${activeSection === 'dashboard' ? 'agents' : activeSection}…`;
+      document.getElementById('breadcrumb').textContent = section.title;
+      document.getElementById('page-title').textContent = section.title;
+      document.getElementById('page-description').textContent = section.description;
+      document.title = `${section.title} | AgentHub`;
+      const options = ({ users: ['All', 'Active', 'Inactive'], agents: ['All', 'Active', 'Inactive', 'Failing'], contracts: ['All', 'Active', 'Expired'], errors: ['All', 'Open', 'Resolved'] })[activeSection];
+      document.getElementById('page-actions').innerHTML = activeSection === 'dashboard'
+        ? `<span class="${secondaryButton}">${icon('calendar', 'h-4 w-4')}November 2026</span><button id="export-button" class="${secondaryButton}">${icon('download', 'h-4 w-4')}Export report</button>`
+        : `${options ? `<label class="sr-only" for="status-filter">Filter by status</label><select id="status-filter" class="${secondaryButton}">${options.map(option => `<option value="${option}">${option === 'All' ? 'All statuses' : option}</option>`).join('')}</select>` : ''}<span class="rounded-lg border border-violet-100 bg-violet-50 px-3 py-2 text-xs text-violet-500 dark:border-violet-500/20 dark:bg-violet-500/10">Demo data</span>`;
+      renderContent();
+      setMobileMenu(false);
+    }
+    function setMobileMenu(open) {
+      document.getElementById('sidebar').classList.toggle('-translate-x-full', !open);
+      document.getElementById('mobile-backdrop').classList.toggle('hidden', !open);
+      document.getElementById('menu-button').setAttribute('aria-expanded', String(open));
+      document.getElementById('menu-button').setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+    }
+    function setTheme(dark) {
+      document.documentElement.classList.toggle('dark', dark);
+      const button = document.getElementById('theme-toggle');
+      button.innerHTML = icon(dark ? 'sun' : 'moon');
+      button.setAttribute('aria-label', `Switch to ${dark ? 'light' : 'dark'} mode`);
+      button.setAttribute('aria-pressed', String(dark));
+    }
+    function openModal(title, body) {
+      modalOpener = document.activeElement;
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-body').innerHTML = body;
+      document.getElementById('modal').showModal();
+    }
+    function detailFields(fields) {
+      return `<dl class="space-y-4">${fields.map(([label, value]) => `<div class="grid grid-cols-3 gap-3 border-b border-slate-100 pb-3 text-sm last:border-0 dark:border-slate-800"><dt class="text-xs text-slate-400">${escapeHTML(label)}</dt><dd class="col-span-2 break-words">${escapeHTML(value)}</dd></div>`).join('')}</dl>`;
+    }
+    function findRecord(type, id) {
+      return ({ users, agents, skills, contracts, errors })[type]?.find(record => record.id === id);
+    }
+    function showDetail(type, record) {
+      if (type === 'users') openModal(record.name, detailFields(Object.entries(record).map(([key, value]) => [key[0].toUpperCase() + key.slice(1), value])));
+      if (type === 'agents') openModal(`Configure ${record.name}`, `<p class="mb-4 text-xs leading-6 text-slate-400">Review and edit this agent's system prompt. Changes apply to this demo session only.</p><form id="prompt-form" data-id="${record.id}"><label for="system-prompt" class="mb-2 block text-sm font-medium">System prompt</label><textarea id="system-prompt" name="prompt" required rows="8" class="w-full rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm leading-6 outline-none focus:border-violet-500 dark:border-slate-700 dark:bg-slate-950">${escapeHTML(record.prompt)}</textarea><button type="submit" class="mt-4 rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-violet-500">Save configuration</button></form>`);
+      if (type === 'skills') openModal(record.name, `<p class="mb-5 text-sm leading-6 text-slate-500 dark:text-slate-400">${escapeHTML(record.description)}</p>${detailFields([['Skill ID', record.id], ['Monthly price', money(record.price)], ['Enabled on', `${agents.filter(agent => agent.skills.includes(record.id)).length} agents`]])}<h3 class="mb-2 mt-4 text-sm font-medium">Agents using this skill</h3><p class="text-sm text-slate-500 dark:text-slate-400">${escapeHTML(agents.filter(agent => agent.skills.includes(record.id)).map(agent => agent.name).join(', ') || 'No agents yet')}</p>`);
+      if (type === 'contracts') openModal(`Contract ${record.id}`, `${detailFields([['Client', record.client], ['Rented agent', record.agent], ['Status', record.status], ['Contract dates', `${record.start} to ${record.end}`], ['Payment date', record.paid], ['Base rental', money(record.base)]])}<h3 class="mb-3 mt-5 text-sm font-semibold">Contracted skills</h3><ul class="space-y-3">${record.items.map(item => `<li class="flex justify-between gap-3 text-sm text-slate-500 dark:text-slate-400"><span>${escapeHTML(item.name)}</span><span>${money(item.price)}</span></li>`).join('')}</ul><div class="mt-5 flex justify-between text-sm text-amber-600 dark:text-amber-400"><span>Discount / coupon</span><span>-${money(record.discount)}</span></div><div class="mt-4 flex justify-between border-t border-slate-200 pt-4 font-semibold dark:border-slate-700"><span>Total paid (USD)</span><span>${money(contractTotal(record))}</span></div>`);
+      if (type === 'errors') openModal(`Error ${record.id}`, `${detailFields([['Agent', record.agent], ['Timestamp', record.time], ['Type', record.type], ['Severity', record.severity], ['Status', record.resolved ? 'Resolved' : 'Open']])}<h3 class="mb-3 mt-5 text-sm font-semibold">Full execution trace</h3><pre class="overflow-x-auto whitespace-pre-wrap break-words rounded-lg bg-slate-950 p-4 font-mono text-xs leading-6 text-slate-300">${escapeHTML(record.trace)}</pre>`);
+    }
+    function requestDelete(type, record) {
+      const reason = type === 'users' && agents.some(agent => agent.owner === record.name)
+        ? 'This user owns agents. Delete their agents first to avoid leaving agents without an owner.'
+        : type === 'skills' && agents.some(agent => agent.skills.includes(record.id))
+          ? 'This skill is enabled on one or more agents. Delete those agents first. Existing contract breakdowns remain preserved.'
+          : '';
+      if (reason) {
+        openModal('This record is still in use', `<p class="text-sm leading-6 text-slate-500 dark:text-slate-400">${reason}</p>`);
+        return;
+      }
+      pendingDelete = { type, id: record.id };
+      openModal(`Delete ${record.name}?`, '<p class="text-sm leading-6 text-slate-500 dark:text-slate-400">This removes the record from the current demo session. Historical contracts and error logs are preserved. Reloading the page restores demo data.</p><div class="mt-6 flex justify-end gap-3"><button id="cancel-delete" class="' + secondaryButton + '">Cancel</button><button id="confirm-delete" class="rounded-lg bg-rose-600 px-4 py-2 text-xs font-medium text-white hover:bg-rose-500">Delete record</button></div>');
+    }
+    function closeMenus() {
+      document.querySelectorAll('[data-menu][aria-expanded="true"]').forEach(button => {
+        button.setAttribute('aria-expanded', 'false');
+        document.getElementById(button.getAttribute('aria-controls')).classList.add('hidden');
+      });
+    }
+    document.addEventListener('click', event => {
+      const menu = event.target.closest('[data-menu]');
+      if (menu) {
+        const wasOpen = menu.getAttribute('aria-expanded') === 'true';
+        closeMenus();
+        if (!wasOpen) {
+          menu.setAttribute('aria-expanded', 'true');
+          document.getElementById(menu.getAttribute('aria-controls')).classList.remove('hidden');
+        }
+        return;
+      }
+      closeMenus();
+      const expand = event.target.closest('[data-expand]');
+      if (expand) {
+        const open = expand.getAttribute('aria-expanded') !== 'true';
+        expand.setAttribute('aria-expanded', String(open));
+        const list = document.getElementById(expand.getAttribute('aria-controls'));
+        list.classList.toggle('grid-rows-[0fr]', !open);
+        list.classList.toggle('grid-rows-[1fr]', open);
+        expand.querySelector('svg').classList.toggle('rotate-180', open);
+      }
+      const action = event.target.closest('[data-action]');
+      if (action) {
+        const record = findRecord(action.dataset.type, action.dataset.id);
+        if (!record) { notify('This record is no longer available.'); return; }
+        if (action.dataset.action === 'delete') requestDelete(action.dataset.type, record);
+        if (['detail', 'configure'].includes(action.dataset.action)) showDetail(action.dataset.type, record);
+        if (action.dataset.action === 'resolve') {
+          record.resolved = true;
+          renderContent();
+          notify(`${record.id} marked as resolved. Agent health must be reviewed separately.`);
+        }
+      }
+      if (event.target.closest('#cancel-delete')) document.getElementById('modal').close();
+      if (event.target.closest('#confirm-delete') && pendingDelete) {
+        const { type, id } = pendingDelete;
+        if (type === 'users') users = users.filter(record => record.id !== id);
+        if (type === 'agents') agents = agents.filter(record => record.id !== id);
+        if (type === 'skills') skills = skills.filter(record => record.id !== id);
+        document.getElementById('modal').close();
+        renderContent();
+        notify('Record deleted from this demo session.');
+      }
+      if (event.target.closest('#export-button')) {
+        const csv = ['Contract,Client,Agent,Payment date,Total paid USD,Discount USD', ...contracts.map(contract => [contract.id, contract.client, contract.agent, contract.paid, contractTotal(contract), contract.discount].join(','))].join('\r\n');
+        const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = 'agenthub-contract-report.csv';
+        anchor.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        notify('Contract report exported as CSV.');
+      }
+    });
+    document.addEventListener('submit', event => {
+      if (event.target.id !== 'prompt-form') return;
+      event.preventDefault();
+      const textarea = document.getElementById('system-prompt');
+      if (!textarea.value.trim()) { textarea.setCustomValidity('Enter a non-empty system prompt.'); textarea.reportValidity(); return; }
+      const agent = findRecord('agents', event.target.dataset.id);
+      if (!agent) { notify('This agent is no longer available.'); return; }
+      agent.prompt = textarea.value.trim();
+      document.getElementById('modal').close();
+      notify('Agent configuration saved for this session.');
+    });
+    document.addEventListener('input', event => {
+      if (event.target.id === 'system-prompt') event.target.setCustomValidity('');
+    });
+    document.getElementById('search').addEventListener('input', event => { query = event.target.value; renderContent(); });
+    document.addEventListener('change', event => {
+      if (event.target.id === 'status-filter') { statusFilter = event.target.value; renderContent(); }
+    });
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const dark = !document.documentElement.classList.contains('dark');
+      setTheme(dark);
+      try { localStorage.setItem('agenthub-theme', dark ? 'dark' : 'light'); }
+      catch (error) { console.error('Unable to save theme preference:', error); notify('Theme changed, but your browser could not save the preference.'); }
+    });
+    document.getElementById('menu-button').addEventListener('click', () => setMobileMenu(document.getElementById('menu-button').getAttribute('aria-expanded') !== 'true'));
+    document.getElementById('mobile-backdrop').addEventListener('click', () => setMobileMenu(false));
+    document.getElementById('modal-close').addEventListener('click', () => document.getElementById('modal').close());
+    document.getElementById('modal').addEventListener('click', event => {
+      if (event.target !== event.currentTarget) return;
+      const bounds = event.currentTarget.getBoundingClientRect();
+      if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) event.currentTarget.close();
+    });
+    document.getElementById('modal').addEventListener('close', () => {
+      pendingDelete = null;
+      if (modalOpener?.isConnected) modalOpener.focus();
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        const openMenu = document.querySelector('[data-menu][aria-expanded="true"]');
+        closeMenus();
+        openMenu?.focus();
+        setMobileMenu(false);
+      }
+    });
+    document.getElementById('about-button').addEventListener('click', () => {
+      setMobileMenu(false);
+      openModal('Welcome to AgentHub', '<p class="text-sm leading-7 text-slate-500 dark:text-slate-400">AgentHub is a platform for renting and managing AI agents equipped with reusable skills. This control center is for the <strong class="text-slate-800 dark:text-white">platform administrator</strong> who oversees clients, agent configurations, skill availability, rental contracts, and execution errors.</p><p class="mt-4 text-xs leading-6 text-slate-400">This frontend-only demo uses sample records. No requests are sent to a backend. Data edits last until reload; your theme preference and section link persist.</p>');
+    });
+    window.addEventListener('hashchange', navigate);
+    try { setTheme(localStorage.getItem('agenthub-theme') === 'dark'); }
+    catch (error) { console.error('Unable to read theme preference:', error); setTheme(false); notify('Your browser blocked saved preferences. Theme changes will apply for this visit only.'); }
+    navigate();
+  </script>
+</body>
+</html>
